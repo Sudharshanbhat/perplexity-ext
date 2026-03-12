@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import getWebviewContent from './ui/webviewContent';
 import sendMessageToPerplexity from './util/perplexity';
 import { PerplexityMessage } from './util/perplexity';
+import * as path from 'path';
 
 import { Sidebar } from './util/sidebar';
 
@@ -119,6 +120,33 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.window.registerWebviewViewProvider(Sidebar.viewType, sideBarProvider));
 
 	context.subscriptions.push(disposableChatWindow);
+
+	// Command: Run current Python file in terminal
+	const runPythonCmd = vscode.commands.registerCommand('perplexity-ext.runCurrentPython', async () => {
+
+		const editor = vscode.window.activeTextEditor;
+		if (!editor) {
+			vscode.window.showErrorMessage('No active editor');
+			return;
+		}
+
+		const doc = editor.document;
+		if (doc.languageId !== 'python') {
+			vscode.window.showErrorMessage('Active file is not a Python file');
+			return;
+		}
+
+		if (doc.isDirty) {
+			await doc.save();
+		}
+
+		const filePath = doc.fileName;
+		const terminal = vscode.window.createTerminal(`Run: ${path.basename(filePath)}`);
+		terminal.show(true);
+		terminal.sendText(`python "${filePath}"`);
+	});
+
+	context.subscriptions.push(runPythonCmd);
 
 }
 

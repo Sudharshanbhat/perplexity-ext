@@ -11,7 +11,11 @@
   "categories": [
     "AI"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCommand:perplexity-ext.openChatWindow",
+    "onCommand:perplexity-ext.setAPIToken",
+    "onCommand:perplexity-ext.runCurrentPython"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -22,6 +26,27 @@
       {
         "command": "perplexity-ext.setAPIToken",
         "title": "Perplexity: Set API Token"
+      }
+      ,
+      {
+        "command": "perplexity-ext.runCurrentPython",
+        "title": "Perplexity: Run Current Python File"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "perplexity-ext.runCurrentPython",
+          "group": "navigation",
+          "when": "editorLangId == python"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "perplexity-ext.runCurrentPython",
+        "key": "ctrl+alt+n",
+        "when": "editorTextFocus && editorLangId == python"
       }
     ],
     "viewsContainers": {
